@@ -16,8 +16,9 @@ export const uploadFile = async (file) => {
 };
 
 export const loadSampleData = async (scenario) => {
-    const response = await api.get(`/sample-data/${scenario}`);
-    return response.data;
+    // Use embedded sample data (no backend required)
+    const { getSampleData } = await import('./data/sampleData');
+    return getSampleData(scenario);
 };
 
 export default api;
