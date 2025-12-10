@@ -1,7 +1,17 @@
+import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, BarChart3, ArrowRight } from 'lucide-react';
 
 export default function OverviewTab({ data, onNavigate }) {
     const { kpis, channels, marginal_efficiency } = data;
+
+    // Animation state
+    const [isAnimated, setIsAnimated] = useState(false);
+
+    // Trigger animation after mount
+    useEffect(() => {
+        const timer = setTimeout(() => setIsAnimated(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
     // Format currency
     const formatCurrency = (value) => {
@@ -120,14 +130,22 @@ export default function OverviewTab({ data, onNavigate }) {
                                 <div className="flex-1 flex items-center gap-3">
                                     <div className="flex-1 h-5 bg-slate-50 rounded relative overflow-hidden">
                                         <div
-                                            className="absolute inset-y-0 left-0 rounded"
+                                            className="absolute inset-y-0 left-0 rounded transition-all ease-out"
                                             style={{
-                                                width: `${item.value}%`,
-                                                backgroundColor: item.color
+                                                width: isAnimated ? `${item.value}%` : '0%',
+                                                backgroundColor: item.color,
+                                                transitionDuration: '800ms',
+                                                transitionDelay: `${index * 80}ms`
                                             }}
                                         />
                                     </div>
-                                    <div className="w-28 text-xs text-slate-500 text-right shrink-0">
+                                    <div
+                                        className="w-28 text-xs text-slate-500 text-right shrink-0 transition-opacity duration-500"
+                                        style={{
+                                            opacity: isAnimated ? 1 : 0,
+                                            transitionDelay: `${index * 80 + 400}ms`
+                                        }}
+                                    >
                                         <span className="font-medium text-slate-700">{item.value.toFixed(1)}%</span>
                                         <span className="text-slate-400 ml-1">({formatCurrency(item.amount)})</span>
                                     </div>
